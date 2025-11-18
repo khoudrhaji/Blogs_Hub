@@ -1,0 +1,313 @@
+{
+  "info": {
+    "name": "User & Post Management API",
+    "description": "Complete API collection for user and post management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/users",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/users/{{userId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "users", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+1-555-123-4567\",\n  \"age\": 28,\n  \"address\": \"123 Main Street, New York, NY 10001\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/users",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "users"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"+1-555-987-6543\",\n  \"age\": 30,\n  \"address\": \"456 Oak Avenue, Boston, MA 02101\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/users/{{userId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "users", "{{userId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/users/{{userId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "users", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Get All Posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/posts",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "posts"]
+            }
+          }
+        },
+        {
+          "name": "Get Posts (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/posts?limit=5&page=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "posts"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Post by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/posts/{{postId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "posts", "{{postId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Getting Started with MongoDB\",\n  \"body\": \"MongoDB is a NoSQL database that provides flexible, scalable document storage. In this post, we'll explore the basics of MongoDB and how to use it with Node.js.\",\n  \"author\": \"{{userId}}\",\n  \"tags\": [\"mongodb\", \"nodejs\", \"database\", \"nosql\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/posts",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "posts"]
+            }
+          }
+        },
+        {
+          "name": "Update Post",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Advanced MongoDB Techniques\",\n  \"body\": \"Learn advanced techniques for working with MongoDB, including indexing, aggregation, and performance optimization.\",\n  \"tags\": [\"mongodb\", \"advanced\", \"performance\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/posts/{{postId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "posts", "{{postId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Post",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/posts/{{postId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "posts", "{{postId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Add Comment to Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Johnson\",\n  \"email\": \"alice@example.com\",\n  \"content\": \"This is a great post! Very informative and well-written. Looking forward to more posts like this.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/posts/{{postId}}/comments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "posts", "{{postId}}", "comments"]
+            }
+          }
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Johnson\",\n  \"email\": \"alice@example.com\",\n  \"content\": \"Updated comment: This is an excellent post!\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/posts/{{postId}}/comments/{{commentId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": [
+                "api",
+                "posts",
+                "{{postId}}",
+                "comments",
+                "{{commentId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/posts/{{postId}}/comments/{{commentId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": [
+                "api",
+                "posts",
+                "{{postId}}",
+                "comments",
+                "{{commentId}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "userId",
+      "value": "507f1f77bcf86cd799439011",
+      "type": "string"
+    },
+    {
+      "key": "postId",
+      "value": "507f1f77bcf86cd799439012",
+      "type": "string"
+    },
+    {
+      "key": "commentId",
+      "value": "507f1f77bcf86cd799439013",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User & Post Management</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+      }
+
+      .sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .section {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .section h2 {
+        color: #667eea;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        border-bottom: 3px solid #667eea;
+        padding-bottom: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+        font-weight: 500;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        transition: border-color 0.3s;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        width: 100%;
+        font-weight: 600;
+        transition: transform 0.2s;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .message {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        display: none;
+      }
+
+      .message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        display: block;
+      }
+
+      .message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        display: block;
+      }
+
+      .data-display {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        margin-bottom: 30px;
+      }
+
+      .data-display h2 {
+        color: #667eea;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        border-bottom: 3px solid #667eea;
+        padding-bottom: 10px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .button-group button {
+        flex: 1;
+      }
+
+      .data-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+
+      .data-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 4px solid #667eea;
+      }
+
+      .data-card h3 {
+        color: #667eea;
+        margin-bottom: 10px;
+      }
+
+      .data-card p {
+        color: #666;
+        margin-bottom: 5px;
+        font-size: 0.95em;
+      }
+
+      .data-card small {
+        color: #999;
+      }
+
+      .card-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .card-actions button {
+        flex: 1;
+        padding: 8px;
+        font-size: 0.9em;
+      }
+
+      .btn-delete {
+        background: #dc3545;
+      }
+
+      .btn-delete:hover {
+        background: #c82333;
+      }
+
+      .btn-edit {
+        background: #28a745;
+      }
+
+      .btn-edit:hover {
+        background: #218838;
+      }
+
+      .loading {
+        text-align: center;
+        color: #667eea;
+        font-weight: 600;
+      }
+
+      .no-data {
+        text-align: center;
+        color: #999;
+        padding: 20px;
+        font-style: italic;
+      }
+
+      @media (max-width: 768px) {
+        .sections {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 1.8em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📊 User & Post Management System</h1>
+
+      <div class="sections">
+        <!-- User Form -->
+        <div class="section">
+          <h2>👤 Add New User</h2>
+          <div id="userMessage" class="message"></div>
+          <form id="userForm">
+            <div class="form-group">
+              <label for="userName">Name *</label>
+              <input
+                type="text"
+                id="userName"
+                name="name"
+                required
+                placeholder="Enter full name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="userEmail">Email *</label>
+              <input
+                type="email"
+                id="userEmail"
+                name="email"
+                required
+                placeholder="Enter email address"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="userPhone">Phone</label>
+              <input
+                type="tel"
+                id="userPhone"
+                name="phone"
+                placeholder="Enter phone number"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="userAge">Age</label>
+              <input
+                type="number"
+                id="userAge"
+                name="age"
+                min="0"
+                max="150"
+                placeholder="Enter age"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="userAddress">Address</label>
+              <input
+                type="text"
+                id="userAddress"
+                name="address"
+                placeholder="Enter address"
+              />
+            </div>
+
+            <button type="submit">Create User</button>
+          </form>
+        </div>
+
+        <!-- Post Form -->
+        <div class="section">
+          <h2>📝 Add New Post</h2>
+          <div id="postMessage" class="message"></div>
+          <form id="postForm">
+            <div class="form-group">
+              <label for="postTitle">Title *</label>
+              <input
+                type="text"
+                id="postTitle"
+                name="title"
+                required
+                placeholder="Enter post title"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="postBody">Content *</label>
+              <textarea
+                id="postBody"
+                name="body"
+                required
+                placeholder="Enter post content"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="postAuthor">Author ID</label>
+              <input
+                type="text"
+                id="postAuthor"
+                name="author"
+                placeholder="Enter user ID (optional)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="postTags">Tags (comma-separated)</label>
+              <input
+                type="text"
+                id="postTags"
+                name="tags"
+                placeholder="e.g., nodejs, express, mongodb"
+              />
+            </div>
+
+            <button type="submit">Create Post</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Users Display -->
+      <div class="data-display">
+        <h2>📋 All Users</h2>
+        <div class="button-group">
+          <button onclick="loadUsers()">Refresh Users</button>
+          <button onclick="deleteAllUsers()" style="background: #dc3545">
+            Delete All Users
+          </button>
+        </div>
+        <div id="usersList" class="data-list">
+          <div class="no-data">No users found. Create one to get started!</div>
+        </div>
+      </div>
+
+      <!-- Posts Display -->
+      <div class="data-display">
+        <h2>📚 All Posts</h2>
+        <div class="button-group">
+          <button onclick="loadPosts()">Refresh Posts</button>
+          <button onclick="deleteAllPosts()" style="background: #dc3545">
+            Delete All Posts
+          </button>
+        </div>
+        <div id="postsList" class="data-list">
+          <div class="no-data">No posts found. Create one to get started!</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:5000/api";
+
+      // ============= USER FUNCTIONS =============
+      document
+        .getElementById("userForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = {
+            name: document.getElementById("userName").value,
+            email: document.getElementById("userEmail").value,
+            phone: document.getElementById("userPhone").value,
+            age: document.getElementById("userAge").value
+              ? parseInt(document.getElementById("userAge").value)
+              : undefined,
+            address: document.getElementById("userAddress").value,
+          };
+
+          try {
+            const response = await fetch(`${API_URL}/users`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage("userMessage", `✅ ${data.message}`, "success");
+              document.getElementById("userForm").reset();
+              loadUsers();
+            } else {
+              showMessage("userMessage", `❌ ${data.message}`, "error");
+            }
+          } catch (error) {
+            showMessage("userMessage", `❌ Error: ${error.message}`, "error");
+          }
+        });
+
+      async function loadUsers() {
+        try {
+          const response = await fetch(`${API_URL}/users`);
+          const users = await response.json();
+
+          const usersList = document.getElementById("usersList");
+
+          if (!Array.isArray(users) || users.length === 0) {
+            usersList.innerHTML = '<div class="no-data">No users found</div>';
+            return;
+          }
+
+          usersList.innerHTML = users
+            .map(
+              (user) => `
+                    <div class="data-card">
+                        <h3>${user.name}</h3>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        ${
+                          user.phone
+                            ? `<p><strong>Phone:</strong> ${user.phone}</p>`
+                            : ""
+                        }
+                        ${
+                          user.age
+                            ? `<p><strong>Age:</strong> ${user.age}</p>`
+                            : ""
+                        }
+                        ${
+                          user.address
+                            ? `<p><strong>Address:</strong> ${user.address}</p>`
+                            : ""
+                        }
+                        <p><strong>ID:</strong> <small>${user._id}</small></p>
+                        <p><strong>Created:</strong> <small>${new Date(
+                          user.createdAt
+                        ).toLocaleString()}</small></p>
+                        <div class="card-actions">
+                            <button class="btn-edit" onclick="copyToClipboard('${
+                              user._id
+                            }')">Copy ID</button>
+                            <button class="btn-delete" onclick="deleteUser('${
+                              user._id
+                            }', '${user.name}')">Delete</button>
+                        </div>
+                    </div>
+                `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error loading users:", error);
+          document.getElementById(
+            "usersList"
+          ).innerHTML = `<div class="no-data">Error loading users</div>`;
+        }
+      }
+
+      async function deleteUser(userId, userName) {
+        if (confirm(`Are you sure you want to delete "${userName}"?`)) {
+          try {
+            const response = await fetch(`${API_URL}/users/${userId}`, {
+              method: "DELETE",
+            });
+
+            if (response.ok) {
+              showMessage(
+                "userMessage",
+                `✅ User deleted successfully`,
+                "success"
+              );
+              loadUsers();
+            }
+          } catch (error) {
+            showMessage("userMessage", `❌ Error: ${error.message}`, "error");
+          }
+        }
+      }
+
+      async function deleteAllUsers() {
+        if (
+          confirm(
+            "Are you sure you want to delete ALL users? This cannot be undone!"
+          )
+        ) {
+          try {
+            const response = await fetch(`${API_URL}/users`);
+            const users = await response.json();
+
+            for (let user of users) {
+              await fetch(`${API_URL}/users/${user._id}`, { method: "DELETE" });
+            }
+
+            showMessage("userMessage", `✅ All users deleted`, "success");
+            loadUsers();
+          } catch (error) {
+            showMessage("userMessage", `❌ Error: ${error.message}`, "error");
+          }
+        }
+      }
+
+      // ============= POST FUNCTIONS =============
+      document
+        .getElementById("postForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const tagsInput = document.getElementById("postTags").value;
+          const tags = tagsInput
+            ? tagsInput.split(",").map((tag) => tag.trim())
+            : [];
+
+          const formData = {
+            title: document.getElementById("postTitle").value,
+            body: document.getElementById("postBody").value,
+            author: document.getElementById("postAuthor").value || undefined,
+            tags: tags,
+          };
+
+          try {
+            const response = await fetch(`${API_URL}/posts`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage(
+                "postMessage",
+                `✅ Post created successfully`,
+                "success"
+              );
+              document.getElementById("postForm").reset();
+              loadPosts();
+            } else {
+              showMessage("postMessage", `❌ ${data.message}`, "error");
+            }
+          } catch (error) {
+            showMessage("postMessage", `❌ Error: ${error.message}`, "error");
+          }
+        });
+
+      async function loadPosts() {
+        try {
+          const response = await fetch(`${API_URL}/posts`);
+          const data = await response.json();
+          const posts = data.posts || [];
+
+          const postsList = document.getElementById("postsList");
+
+          if (posts.length === 0) {
+            postsList.innerHTML = '<div class="no-data">No posts found</div>';
+            return;
+          }
+
+          postsList.innerHTML = posts
+            .map(
+              (post) => `
+                    <div class="data-card">
+                        <h3>${post.title}</h3>
+                        <p>${post.body.substring(0, 100)}...</p>
+                        ${
+                          post.author
+                            ? `<p><strong>Author:</strong> ${
+                                typeof post.author === "object"
+                                  ? post.author.name
+                                  : post.author
+                              }</p>`
+                            : ""
+                        }
+                        ${
+                          post.tags && post.tags.length > 0
+                            ? `<p><strong>Tags:</strong> ${post.tags.join(
+                                ", "
+                              )}</p>`
+                            : ""
+                        }
+                        <p><strong>ID:</strong> <small>${post._id}</small></p>
+                        <p><strong>Published:</strong> <small>${new Date(
+                          post.publishedAt
+                        ).toLocaleString()}</small></p>
+                        <div class="card-actions">
+                            <button class="btn-edit" onclick="copyToClipboard('${
+                              post._id
+                            }')">Copy ID</button>
+                            <button class="btn-delete" onclick="deletePost('${
+                              post._id
+                            }')">Delete</button>
+                        </div>
+                    </div>
+                `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error loading posts:", error);
+          document.getElementById(
+            "postsList"
+          ).innerHTML = `<div class="no-data">Error loading posts</div>`;
+        }
+      }
+
+      async function deletePost(postId) {
+        if (confirm("Are you sure you want to delete this post?")) {
+          try {
+            const response = await fetch(`${API_URL}/posts/${postId}`, {
+              method: "DELETE",
+            });
+
+            if (response.ok) {
+              showMessage(
+                "postMessage",
+                `✅ Post deleted successfully`,
+                "success"
+              );
+              loadPosts();
+            }
+          } catch (error) {
+            showMessage("postMessage", `❌ Error: ${error.message}`, "error");
+          }
+        }
+      }
+
+      async function deleteAllPosts() {
+        if (
+          confirm(
+            "Are you sure you want to delete ALL posts? This cannot be undone!"
+          )
+        ) {
+          try {
+            const response = await fetch(`${API_URL}/posts`);
+            const data = await response.json();
+            const posts = data.posts || [];
+
+            for (let post of posts) {
+              await fetch(`${API_URL}/posts/${post._id}`, { method: "DELETE" });
+            }
+
+            showMessage("postMessage", `✅ All posts deleted`, "success");
+            loadPosts();
+          } catch (error) {
+            showMessage("postMessage", `❌ Error: ${error.message}`, "error");
+          }
+        }
+      }
+
+      // ============= UTILITY FUNCTIONS =============
+      function showMessage(elementId, message, type) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = `message ${type}`;
+        setTimeout(() => {
+          element.className = "message";
+        }, 5000);
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+        alert("ID copied to clipboard!");
+      }
+
+      // Load data on page load
+      window.addEventListener("load", () => {
+        loadUsers();
+        loadPosts();
+      });
+    </script>
+  </body>
+</html>
